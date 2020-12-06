@@ -32,6 +32,62 @@ impl Iterator for PairIterator {
     }
 }
 
+struct TriadIterator {
+    vec: Vec<usize>,
+    i_idx: usize,
+    j_idx: usize,
+    k_idx: usize,
+}
+impl TriadIterator {
+    fn new(vec: Vec<usize>) -> Self {
+        Self {
+            vec,
+            i_idx: 0,
+            j_idx: 1,
+            k_idx: 1,
+        }
+    }
+}
+impl Iterator for TriadIterator {
+    type Item = (usize, usize, usize);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let last_idx = self.vec.len() - 1;
+        if self.i_idx < last_idx {
+            if self.j_idx < last_idx {
+                if self.k_idx < last_idx {
+                    self.k_idx += 1;
+                    return Some((
+                        self.vec[self.i_idx],
+                        self.vec[self.j_idx],
+                        self.vec[self.k_idx],
+                    ));
+                }
+                self.j_idx += 1;
+                self.k_idx = self.j_idx + 1;
+                if self.k_idx <= last_idx {
+                    return Some((
+                        self.vec[self.i_idx],
+                        self.vec[self.j_idx],
+                        self.vec[self.k_idx],
+                    ));
+                }
+            }
+            self.i_idx += 1;
+            self.j_idx = self.i_idx + 1;
+            self.k_idx = self.i_idx + 2;
+            if self.k_idx <= last_idx {
+                return Some((
+                    self.vec[self.i_idx],
+                    self.vec[self.j_idx],
+                    self.vec[self.k_idx],
+                ));
+            }
+        }
+        None
+    }
+}
+
 trait Pairs {
     /// Return a lazy iterator over unique pairs from the vec
     fn pairs(self) -> PairIterator;
@@ -40,6 +96,18 @@ impl Pairs for Vec<usize> {
     /// Return a lazy iterator over unique pairs from the vec
     fn pairs(self) -> PairIterator {
         PairIterator::new(self)
+    }
+}
+
+trait Triads {
+    /// Return a lazy iterator over unique triads from the vec
+    fn triads(self) -> TriadIterator;
+}
+
+impl Triads for Vec<usize> {
+    /// Return a lazy iterator over unique triads from the vec
+    fn triads(self) -> TriadIterator {
+        TriadIterator::new(self)
     }
 }
 
@@ -64,7 +132,7 @@ fn get_day_one_input() -> Vec<usize> {
     ]
 }
 
-fn day_one_solution() -> usize {
+fn day_one_solution_one() -> usize {
     get_day_one_input()
         .pairs()
         .filter(|(i, j)| i + j == 2020)
@@ -73,6 +141,16 @@ fn day_one_solution() -> usize {
         .unwrap()
 }
 
+fn day_one_solution_two() -> usize {
+    get_day_one_input()
+        .triads()
+        .filter(|(i, j, k)| i + j + k == 2020)
+        .nth(0)
+        .map(|(i, j, k)| i * j * k)
+        .unwrap()
+}
+
 fn main() {
-    dbg!(day_one_solution());
+    dbg!(day_one_solution_one());
+    dbg!(day_one_solution_two());
 }
