@@ -84,7 +84,7 @@ impl TreeMap {
         self.char_at(coord).map(|c| c.into())
     }
 
-    /// A vector of the content along a particular path, starting at start
+    /// An iterable of the content along a particular path, starting at start
     fn content_along<'a>(
         // we've got to specify that the vector reference lives as long as the
         // map so the iterator can know the vec is good to keep a reference to
