@@ -19,5 +19,6 @@ fn main() -> anyhow::Result<()> {
     dbg!(day5::day_five_solution_one()?);
     dbg!(day5::day_five_solution_two()?);
     dbg!(day6::day_six_solution_one());
+    dbg!(day6::day_six_solution_two());
     Ok(())
 }
