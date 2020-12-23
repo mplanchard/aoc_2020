@@ -19,6 +19,15 @@ impl SearchSpecification {
         }
     }
     /// Parse the binary search specification into a binary number
+    ///
+    /// This is great. You can directly convert the search spec into a binary
+    /// number, mapping the "lower" char to 0 and the "upper" char to 1, and
+    /// it directly corresponds to the number you're looking for.
+    ///
+    /// For example, if we consider the left/right rows, with eight rows going
+    /// from 0 to 7, if we want the last row that's RRR (111 == 7). If we want
+    /// the first row it's LLL (000 == 0). If we want the second row it's
+    /// LLR (001 == 1), and so on.
     fn parse(&self, search: &str) -> Result<u8, Error> {
         if search.len() != self.length.into() {
             return Err(anyhow!(
@@ -99,4 +108,33 @@ pub fn day_five_solution_one() -> Result<usize, Error> {
     INPUT.lines().try_fold(0, |acc, ln| {
         Seat::try_from(ln).map(|seat| max(acc, seat.id()))
     })
+}
+
+pub fn day_five_solution_two() -> Result<usize, Error> {
+    let mut ids = INPUT
+        .lines()
+        .map(Seat::try_from)
+        .map(|seat| seat.map(|seat| seat.id()))
+        .collect::<Result<Vec<usize>, Error>>()?;
+    ids.sort();
+    Ok(ids
+        .into_iter()
+        // We're using Result<Ok, Err> here more like an Either<L, R>, where
+        // our "error" is just to indicate that we should short-circuit since
+        // we've found our answer
+        .try_fold(0, |prev, next| {
+            if prev == 0 {
+                // Ignore the first one b/c we know that it's not at the
+                // beginning or end of the sorted list
+                return Ok(next);
+            }
+
+            // We know the target ID is missing, and both +1 and -1 are present,
+            // so if next is 2 larger than prev, we must be in the middle.
+            if next == prev + 2 {
+                return Err(next - 1);
+            }
+            Ok(next)
+        })
+        .unwrap_err())
 }
