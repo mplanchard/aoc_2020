@@ -5,6 +5,7 @@ mod day2;
 mod day3;
 mod day4;
 mod day5;
+mod day6;
 
 fn main() -> anyhow::Result<()> {
     dbg!(day1::day_one_solution_one());
@@ -17,5 +18,6 @@ fn main() -> anyhow::Result<()> {
     dbg!(day4::day_four_solution_two());
     dbg!(day5::day_five_solution_one()?);
     dbg!(day5::day_five_solution_two()?);
+    dbg!(day6::day_six_solution_one());
     Ok(())
 }
